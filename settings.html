@@ -26,7 +26,6 @@
 </main>
 <script src="common.js"></script>
 <script>
-const $=id=>document.getElementById(id);
 function flash(msg,kind){const el=$('srcStatus');el.textContent=msg;el.className='status '+(kind||'')}
 function renderPlayers(){
   const W=[...new Set(st.slots.map(s=>s.week))].sort((a,b)=>a-b);
