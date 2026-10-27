@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Misfits Scheduler</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+html,body{height:100%;margin:0;overflow:hidden}
+.app{display:grid;grid-template-rows:auto auto minmax(0,1fr);height:100vh;height:100dvh;background:#f4f6f9}
+.topbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 12px;background:#17233b;color:#fff}
+.topbar h1{font-size:1rem;margin:0 10px 0 0;white-space:nowrap}
+.topbar button{padding:6px 10px;font-size:.84rem}
+.topbar a{color:#cfd8ea;font-size:.84rem;text-decoration:none;margin-left:6px}
+.topbar .grow{flex:1}
+.statusbar{padding:4px 12px;background:#f4f6f9}
+.statusbar .status{margin:0;padding:6px 10px;font-size:.84rem}
+.body{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0;overflow:hidden}
+.stage{min-height:0;overflow:auto;padding:8px 12px 12px;-webkit-overflow-scrolling:touch}
+.stage .tablewrap{max-height:none;overflow:visible}
+.tray-col{max-height:30vh;overflow:auto;border-top:1px solid #dde2ea;padding:8px 12px;background:#fbfcfe}
+.tray-col .tray{margin-top:0}
+/* Desktop with a mouse: grid and holding area side by side. Touch tablets keep the holding area underneath. */
+@media (min-width:1200px) and (hover:hover){
+  .body{grid-template-columns:minmax(0,1fr) 320px;grid-template-rows:minmax(0,1fr)}
+  .tray-col{max-height:none;border-top:0;border-left:1px solid #dde2ea}
+}
+</style></head><body>
+<div class="app">
+  <header class="topbar">
+    <h1>Misfits</h1>
+    <button id="generate">Generate / re-solve</button>
+    <button class="sec" id="compareOptions">Compare options</button>
+    <button class="sec" id="undo">Undo</button>
+    <button class="sec" id="saveBaseline">Save baseline</button>
+    <button class="sec" id="revert">Revert</button>
+    <button class="sec" id="clearAll">Clear</button>
+    <button class="sec" id="exportCsv">Export CSV</button>
+    <span class="grow"></span>
+    <a href="settings.html">Settings</a><a href="index.html">Home</a>
+  </header>
+  <div class="statusbar"><div id="genStatus" class="status">Loading sheets…</div></div>
+  <div class="body">
+    <section class="stage">
+      <div id="proposal"></div>
+      <div id="options"></div>
+      <div id="alts"></div>
+      <div id="checks"></div>
+      <div id="view"></div>
+    </section>
+    <aside class="tray-col"><div id="tray" class="tray" data-drop="tray"></div></aside>
+  </div>
+</div>
+<div id="menu" class="menu" style="display:none"></div>
+<script src="common.js"></script>
+<script src="solver.js"></script>
+<script src="scheduler.js"></script>
+</body></html>

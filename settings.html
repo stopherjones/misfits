@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Misfits Settings</title><link rel="stylesheet" href="styles.css">
+</head><body>
+<header><h1>Misfits Settings</h1><p><a href="index.html" style="color:#cfd8ea">Home</a> · <a href="scheduler.html" style="color:#cfd8ea">Scheduler</a></p></header>
+<main>
+<section class="panel"><h2>Data sources</h2>
+  <p class="small">Sheet links are kept in <code>data/sources.json</code>.</p>
+  <p class="small">Preferences: <a id="srcPref" href="#" target="_blank" rel="noopener">open</a> · Schedule: <a id="srcSched" href="#" target="_blank" rel="noopener">open</a></p>
+  <div class="buttons"><button id="reload" class="sec">Reload sheets</button></div>
+  <div id="srcStatus" class="status">Loading…</div>
+</section>
+<section class="panel"><h2>Season rules</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+    <div><label for="gpr">Games per round</label><input id="gpr" type="number" min="1" value="6"></div>
+    <div><label for="teamSize">Expected team size</label><input id="teamSize" type="number" min="1" value="9"></div>
+    <div><label for="penalty">Stability penalty (per changed slot)</label><input id="penalty" type="number" min="0" value="20"><div class="small">Higher = proposed moves change fewer slots.</div></div>
+  </div>
+  <p class="small">Changes save automatically and apply the next time the scheduler opens.</p>
+</section>
+<section class="panel"><h2>Players</h2>
+  <p class="small">Tick weeks a player is away. Leave the games cap blank for the even share; enter a cap only if the player has agreed to fewer games.</p>
+  <div class="tablewrap"><table id="playersTable"></table></div>
+</section>
+<footer class="small">Settings are stored in this browser only.</footer>
+</main>
+<script src="common.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+function flash(msg,kind){const el=$('srcStatus');el.textContent=msg;el.className='status '+(kind||'')}
+function renderPlayers(){
+  const W=[...new Set(st.slots.map(s=>s.week))].sort((a,b)=>a-b);
+  if(!st.players.length){$('playersTable').innerHTML='<tr><td class="small">No players loaded.</td></tr>';return}
+  $('playersTable').innerHTML='<thead><tr><th>Player</th><th>Country</th><th>Games cap</th>'+W.map(w=>`<th>Away wk ${esc(w)}</th>`).join('')+'</tr></thead><tbody>'+
+   st.players.map(p=>`<tr><td>${esc(p)}</td>
+    <td><input type="text" style="width:70px" data-k="country" data-p="${esc(p)}" value="${esc(SET.country[p]||'')}" placeholder="e.g. NO"></td>
+    <td><input type="number" min="0" data-k="cap" data-p="${esc(p)}" value="${SET.caps[p]??''}" placeholder="even"></td>
+    ${W.map(w=>`<td><input type="checkbox" data-k="absent" data-p="${esc(p)}" data-w="${esc(w)}" ${(SET.absent[p]||[]).includes(w)?'checked':''}></td>`).join('')}</tr>`).join('')+'</tbody>';
+  $('playersTable').querySelectorAll('input').forEach(el=>el.addEventListener('change',()=>{
+    const p=el.dataset.p;
+    if(el.dataset.k==='country')SET.country[p]=el.value.trim();
+    if(el.dataset.k==='cap')SET.caps[p]=el.value===''?undefined:Number(el.value);
+    if(el.dataset.k==='absent'){const a=new Set(SET.absent[p]||[]);el.checked?a.add(el.dataset.w):a.delete(el.dataset.w);SET.absent[p]=[...a]}
+    saveSettings();
+  }));
+}
+async function load(){
+  try{
+    const src=await loadSources();
+    $('srcPref').href=src.preferences;$('srcSched').href=src.schedule;
+    const [p,s]=await Promise.all([fetchText(src.preferences),fetchText(src.schedule)]);
+    const a=parsePrefs(p),b=parseSched(s);
+    renderPlayers();flash(a+' '+b,'ok');
+  }catch(e){flash('Could not load the sheets: '+e.message,'err')}
+}
+loadSettings();
+for(const k of ['gpr','teamSize','penalty']){$(k).value=SET[k];$(k).addEventListener('change',()=>{SET[k]=Number($(k).value)||0;saveSettings()})}
+$('reload').onclick=load;
+load();
+</script>
+</body></html>

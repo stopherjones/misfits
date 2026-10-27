@@ -1,0 +1,5 @@
+{
+  "preferences": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTF7Pr-6CUgl-iQOY-LRFTxfyUxVhVv-AbKpskTuu4w8Wdx4UHYiZqXjDs4BD9IZO2WE4dVPPAvUJsZ/pub?gid=1072975857&single=true&output=csv",
+  "schedule": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTF7Pr-6CUgl-iQOY-LRFTxfyUxVhVv-AbKpskTuu4w8Wdx4UHYiZqXjDs4BD9IZO2WE4dVPPAvUJsZ/pub?gid=1179127419&single=true&output=csv",
+  "notes": "Published Google Sheets CSV links. Change a sheet here; the site reads it on the next load."
+}
